@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
-// import { BootScene } from './scenes/boot';
+import { LoadAssets } from "./scenes/LoadAssets";
+import { FirstLevel } from "./scenes/FirstLevel";
 
 import { Plugins } from '@capacitor/core';
 import { SCREEN_WIDE, SCREEN_RATIO } from './constants';
@@ -22,7 +23,15 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     scale: {
         mode: Phaser.Scale.FIT
+    },
+    physics:{
+        default: "arcade",
+        arcade:{ 
+            debug:true,
+            gravity: {y: 100}
+        },
     }
+    
 };
 
 const { StatusBar, SplashScreen } = Plugins;
@@ -34,8 +43,8 @@ export class KTGame extends Phaser.Game {
         super(config);
 
         // Example of scene management
-        // this.scene.add('Boot', BootScene, false);
-        // this.scene.start('Boot');
+        this.scene.add("LoadAssets", LoadAssets, true);
+        this.scene.add("FirstLevel", FirstLevel, false);
 
         // File-ops write test
         writeFile(
