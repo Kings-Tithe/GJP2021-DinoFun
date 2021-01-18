@@ -14,8 +14,15 @@ export class LoadAssets extends Scene {
         //our 4 dino friends
         this.load.spritesheet("blueDino",`${this.assets}/images/characters/Dino/DinoSpritesBlue.png`,{ frameWidth: 24, frameHeight: 24});
 
-        //background
-        this.load.image("firstLevelBackground",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-01.png`);
+        //backgrounds
+        this.load.image("firstLevelSky",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-01.png`);
+        this.load.image("firstLevelBackground1",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-02.png`);
+        this.load.image("firstLevelBackground2",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-03.png`);
+        this.load.image("firstLevelBackground3",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-04.png`);
+        this.load.image("firstLevelSpriteSheet",`${this.assets}/images/tilesets/fantasyVillage/Platformer/spritesheet.png`);
+
+        //tilemaps
+        this.load.tilemapTiledJSON("FirstLevelTilemap", `${this.assets}/tilemaps/firstLevel/firstLevel.json`);
     }
 
     create(){
