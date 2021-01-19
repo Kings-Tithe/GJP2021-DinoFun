@@ -41,12 +41,12 @@ export class FirstLevel extends Scene {
         if (this.playerSprite.x != this.changedX) {
             if (this.playerSprite.x > this.changedX) {
                 this.backgroundLayers[1].tilePositionX -= 1;
-                this.backgroundLayers[2].tilePositionX -= 2;
-                this.backgroundLayers[3].tilePositionX -= 3;
+                this.backgroundLayers[2].tilePositionX -= 1.5;
+                this.backgroundLayers[3].tilePositionX -= 2;
             } else if (this.playerSprite.x < this.changedX) {
                 this.backgroundLayers[1].tilePositionX += 1;
-                this.backgroundLayers[2].tilePositionX += 2;
-                this.backgroundLayers[3].tilePositionX += 3;
+                this.backgroundLayers[2].tilePositionX += 1.5;
+                this.backgroundLayers[3].tilePositionX += 2;
             }
             this.changedX = this.playerSprite.x;
             console.log(this.playerSprite.body.velocity);
@@ -128,6 +128,7 @@ export class FirstLevel extends Scene {
         //setup camera
         this.cameras.main.startFollow(this.playerSprite);
         this.cameras.main.setZoom(0.5)
+        this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
     }
 
     createParallexBackground() {
@@ -147,6 +148,7 @@ export class FirstLevel extends Scene {
         this.backgroundLayers[1].setOrigin(.5, .5);
         this.backgroundLayers[1].setDepth(-1);
         this.backgroundLayers[1].setScale(backgroundScaleX, backgroundScaley);
+        this.backgroundLayers[1].width *= 2;
 
         this.backgroundLayers[2] = this.add.tileSprite(0, 2750, 0, 0, "firstLevelBackground2");
         backgroundScaleX = this.cameras.main.displayWidth / this.backgroundLayers[2].width;
@@ -154,6 +156,7 @@ export class FirstLevel extends Scene {
         this.backgroundLayers[2].setOrigin(.5, .5);
         this.backgroundLayers[2].setDepth(-1);
         this.backgroundLayers[2].setScale(backgroundScaleX, backgroundScaley);
+        this.backgroundLayers[2].width *= 2;
 
         this.backgroundLayers[3] = this.add.tileSprite(0, 3000, 0, 0, "firstLevelBackground3");
         backgroundScaleX = this.cameras.main.displayWidth / this.backgroundLayers[3].width;
@@ -161,5 +164,6 @@ export class FirstLevel extends Scene {
         this.backgroundLayers[3].setOrigin(.5, .5);
         this.backgroundLayers[3].setDepth(-1);
         this.backgroundLayers[3].setScale(backgroundScaleX, backgroundScaley);
+        this.backgroundLayers[3].width *= 2;
     }
 }
