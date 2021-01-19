@@ -20,9 +20,13 @@ export class LoadAssets extends Scene {
         this.load.image("firstLevelBackground2",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-03.png`);
         this.load.image("firstLevelBackground3",`${this.assets}/images/tilesets/fantasyVillage/ParallaxBackground/Background-04.png`);
         this.load.image("firstLevelSpriteSheet",`${this.assets}/images/tilesets/fantasyVillage/Platformer/spritesheet.png`);
+        this.load.image("firstLevelObjectsheet",`${this.assets}/images/tilesets/fantasyVillage/GameObject/objects.png`);
 
         //tilemaps
         this.load.tilemapTiledJSON("FirstLevelTilemap", `${this.assets}/tilemaps/firstLevel/firstLevel.json`);
+
+        //objects
+        this.load.image("coin",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Coin.png`);
     }
 
     create(){

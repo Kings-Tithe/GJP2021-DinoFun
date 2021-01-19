@@ -9,9 +9,15 @@ export class FirstLevel extends Scene {
     keys: { [key: string]: Phaser.Input.Keyboard.Key };
     tilemap: Phaser.Tilemaps.Tilemap;
     changedX: number;
+    coins : Phaser.GameObjects.Sprite[];
+    coinCount: number;
 
     constructor() {
         super("FirstLevel");
+
+        //initalize
+        this.coins = [];
+        this.coinCount = 0;
     }
 
     create() {
@@ -40,16 +46,15 @@ export class FirstLevel extends Scene {
         }
         if (this.playerSprite.x != this.changedX) {
             if (this.playerSprite.x > this.changedX) {
-                this.backgroundLayers[1].tilePositionX -= 1;
-                this.backgroundLayers[2].tilePositionX -= 1.5;
-                this.backgroundLayers[3].tilePositionX -= 2;
+                this.backgroundLayers[1].tilePositionX -= .25;
+                this.backgroundLayers[2].tilePositionX -= .35;
+                this.backgroundLayers[3].tilePositionX -= .45;
             } else if (this.playerSprite.x < this.changedX) {
-                this.backgroundLayers[1].tilePositionX += 1;
-                this.backgroundLayers[2].tilePositionX += 1.5;
-                this.backgroundLayers[3].tilePositionX += 2;
+                this.backgroundLayers[1].tilePositionX += .25;
+                this.backgroundLayers[2].tilePositionX += .35;
+                this.backgroundLayers[3].tilePositionX += .45;
             }
             this.changedX = this.playerSprite.x;
-            console.log(this.playerSprite.body.velocity);
             this.backgroundLayers[1].x = this.playerSprite.x;
             this.backgroundLayers[2].x = this.playerSprite.x;
             this.backgroundLayers[3].x = this.playerSprite.x;
@@ -57,7 +62,6 @@ export class FirstLevel extends Scene {
 
         //check if animation is playing when we hit the ground, if it is not start playing idle
         if (!this.playerSprite.anims.isPlaying && this.playerSprite.body.onFloor()) {
-            console.log("setting idle");
             this.playerSprite.play("idle");
         }
     }
@@ -69,7 +73,6 @@ export class FirstLevel extends Scene {
         this.keys["jump"] = this.input.keyboard.addKey("SPACE");
 
         this.input.keyboard.on('keyup-D', () => {
-            console.log("D Pressed")
             this.playerSprite.body.setVelocityX(0);
             this.playerSprite.anims.play("idle");
             if (!this.playerSprite.body.onFloor()) {
@@ -77,7 +80,6 @@ export class FirstLevel extends Scene {
             }
         }, this);
         this.input.keyboard.on('keyup-A', () => {
-            console.log("A Pressed")
             this.playerSprite.body.setVelocityX(0);
             this.playerSprite.anims.play("idle");
             if (!this.playerSprite.body.onFloor()) {
@@ -87,7 +89,7 @@ export class FirstLevel extends Scene {
     }
 
     setupPlayer(key: string) {
-        this.playerSprite = this.physics.add.sprite(256, 800, key, 0);
+        this.playerSprite = this.physics.add.sprite(256, 3000, key, 0);
         this.playerSprite.setScale(7);
         this.playerSprite.body.setOffset(0, 0)
         this.playerSprite.body.setSize(16, 18);
@@ -118,9 +120,11 @@ export class FirstLevel extends Scene {
         this.tilemap = this.make.tilemap({ key: "FirstLevelTilemap" });
 
         let tileset = this.tilemap.addTilesetImage("spritesheet", "firstLevelSpriteSheet");
+        let objectTileset = this.tilemap.addTilesetImage("objects", "firstLevelObjectsheet");
 
-        let collisionLayer = this.tilemap.createLayer("collide", tileset, 0, 0);
-        this.tilemap.createLayer("overtop", tileset, 0, 0);
+        let collisionLayer = this.tilemap.createLayer("collide", [tileset,objectTileset], 0, 0);
+        let overtop = this.tilemap.createLayer("overtop", [tileset,objectTileset], 0, 0);
+        overtop.setDepth(5);
 
         this.tilemap.setCollisionBetween(1, 999, true, true, "collide");
         this.physics.add.collider(this.playerSprite, collisionLayer);
@@ -128,7 +132,24 @@ export class FirstLevel extends Scene {
         //setup camera
         this.cameras.main.startFollow(this.playerSprite);
         this.cameras.main.setZoom(0.5)
-        this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
+        //this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
+
+        let coins  = this.tilemap.getObjectLayer("collectable");
+        coins.objects.forEach((coin) => {
+            if(coin.type = "coin"){
+                let coinSprite = this.physics.add.sprite(coin.x, coin.y, "coin");
+                coinSprite.setOrigin(0,1);
+                coinSprite.setGravity(0.01);
+                coinSprite.setMaxVelocity(0,0);
+
+                this.physics.add.overlap(this.playerSprite, coinSprite, () => {
+                    this.coinCount++;
+                    console.log("newCoinCount: ", this.coinCount);
+                    coinSprite.destroy();
+                });
+                this.coins.push(coinSprite);
+            }
+        })
     }
 
     createParallexBackground() {
