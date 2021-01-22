@@ -32,12 +32,13 @@ export class FirstLevel extends Scene {
             loop: true,
             volume: .4
         })
+        this.signalManager.emit("levelTimerStart");
     }
 
     update() {
         //movement is so pressing A goes left, D goes right and pressing them both makes you jump
         if (this.keys["left"].isDown && this.keys["right"].isDown && this.playerSprite.body.onFloor()) {
-            this.playerSprite.body.setVelocityY(-1500);
+            this.playerSprite.body.setVelocityY(-3000);
         } else if (this.keys["left"].isDown && !this.keys["right"].isDown) {
             this.playerSprite.body.setVelocityX(-675);
             if (this.playerSprite.anims.getName() != "walk" || !this.playerSprite.flipX) {
@@ -98,8 +99,8 @@ export class FirstLevel extends Scene {
     setupPlayer(key: string) {
         this.playerSprite = this.physics.add.sprite(256, 3000, key, 0);
         this.playerSprite.setScale(7);
-        this.playerSprite.body.setOffset(0, 0)
-        this.playerSprite.body.setSize(16, 18);
+        this.playerSprite.body.setSize(12, 16);
+        this.playerSprite.body.offset.y = 5;
         this.physics.world.setBounds(0, 0, this.game.canvas.width, this.game.canvas.height, true, true, true, true);
         //this.playerSprite.body.setCollideWorldBounds(true);
         this.playerSprite.anims.create({
@@ -142,20 +143,19 @@ export class FirstLevel extends Scene {
         //this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
 
         let coins  = this.tilemap.getObjectLayer("collectable");
-        console.log("TotalCoinCount: ", coins.objects.length);
         this.signalManager.emit("TotalCoinCount", coins.objects.length);
         coins.objects.forEach((coin) => {
             if(coin.type = "coin"){
-                let coinSprite = this.physics.add.sprite(coin.x, coin.y, "coin");
+                let coinSprite = this.physics.add.sprite(coin.x, coin.y, "coin", 0);
                 coinSprite.setOrigin(0,1);
                 coinSprite.setGravity(0.01);
                 coinSprite.setMaxVelocity(0,0);
+                coinSprite.play("coinSpin");
 
                 this.physics.add.overlap(this.playerSprite, coinSprite, () => {
                     this.sound.play("coinPickupSound");
                     this.signalManager.emit("coinCollected");
                     this.coinCount++;
-                    console.log("newCoinCount: ", this.coinCount);
                     coinSprite.destroy();
                 });
                 this.coins.push(coinSprite);
