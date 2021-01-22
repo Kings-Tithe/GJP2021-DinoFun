@@ -27,9 +27,16 @@ export class LoadAssets extends Scene {
 
         //objects
         this.load.image("coin",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Coin.png`);
+
+        //sound effects
+        this.load.audio("coinPickupSound",`${this.assets}/audio/soundEffects/Ancient_Game_Coin_Jar_Touch.wav`);
+        this.load.audio("forestMusic",`${this.assets}/audio/music/Field_3.mp3`);
     }
 
     create(){
+        //star hud scene
+        this.scene.launch("Hud");
+        //layer actual game under hud scene
         this.scene.start("FirstLevel");
     }
 }

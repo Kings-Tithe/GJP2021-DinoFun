@@ -5,6 +5,7 @@ import { FirstLevel } from "./scenes/FirstLevel";
 import { Plugins } from '@capacitor/core';
 import { SCREEN_WIDE, SCREEN_RATIO } from './constants';
 import { readFile, writeFile } from './util/file-ops';
+import { Hud } from './scenes/Hud';
 
 const config: Phaser.Types.Core.GameConfig = {
     parent: 'game',
@@ -46,6 +47,7 @@ export class KTGame extends Phaser.Game {
         // Example of scene management
         this.scene.add("LoadAssets", LoadAssets, true);
         this.scene.add("FirstLevel", FirstLevel, false);
+        this.scene.add("Hud", Hud, false);
 
         // File-ops write test
         writeFile(

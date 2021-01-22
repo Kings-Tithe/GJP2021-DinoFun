@@ -1,5 +1,6 @@
 import { Loader, GameObjects, Scene } from 'phaser';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants';
+import { SignalManager } from '../services/SignalManager';
 
 export class FirstLevel extends Scene {
 
@@ -11,6 +12,7 @@ export class FirstLevel extends Scene {
     changedX: number;
     coins : Phaser.GameObjects.Sprite[];
     coinCount: number;
+    signalManager: SignalManager;
 
     constructor() {
         super("FirstLevel");
@@ -18,6 +20,7 @@ export class FirstLevel extends Scene {
         //initalize
         this.coins = [];
         this.coinCount = 0;
+        this.signalManager = SignalManager.get();
     }
 
     create() {
@@ -25,6 +28,10 @@ export class FirstLevel extends Scene {
         this.setupPlayer("blueDino");
         this.setupTilemap();
         this.createParallexBackground();
+        this.sound.play("forestMusic", {
+            loop: true,
+            volume: .4
+        })
     }
 
     update() {
@@ -135,6 +142,8 @@ export class FirstLevel extends Scene {
         //this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
 
         let coins  = this.tilemap.getObjectLayer("collectable");
+        console.log("TotalCoinCount: ", coins.objects.length);
+        this.signalManager.emit("TotalCoinCount", coins.objects.length);
         coins.objects.forEach((coin) => {
             if(coin.type = "coin"){
                 let coinSprite = this.physics.add.sprite(coin.x, coin.y, "coin");
@@ -143,6 +152,8 @@ export class FirstLevel extends Scene {
                 coinSprite.setMaxVelocity(0,0);
 
                 this.physics.add.overlap(this.playerSprite, coinSprite, () => {
+                    this.sound.play("coinPickupSound");
+                    this.signalManager.emit("coinCollected");
                     this.coinCount++;
                     console.log("newCoinCount: ", this.coinCount);
                     coinSprite.destroy();
