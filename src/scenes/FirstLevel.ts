@@ -10,9 +10,10 @@ export class FirstLevel extends Scene {
     keys: { [key: string]: Phaser.Input.Keyboard.Key };
     tilemap: Phaser.Tilemaps.Tilemap;
     changedX: number;
-    coins : Phaser.GameObjects.Sprite[];
+    coins: Phaser.GameObjects.Sprite[];
     coinCount: number;
     signalManager: SignalManager;
+    vineInterval: any;
 
     constructor() {
         super("FirstLevel");
@@ -130,8 +131,8 @@ export class FirstLevel extends Scene {
         let tileset = this.tilemap.addTilesetImage("spritesheet", "firstLevelSpriteSheet");
         let objectTileset = this.tilemap.addTilesetImage("objects", "firstLevelObjectsheet");
 
-        let collisionLayer = this.tilemap.createLayer("collide", [tileset,objectTileset], 0, 0);
-        let overtop = this.tilemap.createLayer("overtop", [tileset,objectTileset], 0, 0);
+        let collisionLayer = this.tilemap.createLayer("collide", [tileset, objectTileset], 0, 0);
+        let overtop = this.tilemap.createLayer("overtop", [tileset, objectTileset], 0, 0);
         overtop.setDepth(5);
 
         this.tilemap.setCollisionBetween(1, 999, true, true, "collide");
@@ -142,23 +143,47 @@ export class FirstLevel extends Scene {
         this.cameras.main.setZoom(0.5)
         //this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
 
-        let coins  = this.tilemap.getObjectLayer("collectable");
-        this.signalManager.emit("TotalCoinCount", coins.objects.length);
-        coins.objects.forEach((coin) => {
-            if(coin.type = "coin"){
-                let coinSprite = this.physics.add.sprite(coin.x, coin.y, "coin", 0);
-                coinSprite.setOrigin(0,1);
-                coinSprite.setGravity(0.01);
-                coinSprite.setMaxVelocity(0,0);
+        let objects = this.tilemap.getObjectLayer("collectable");
+        //this.signalManager.emit("TotalCoinCount", objects.objects.length);
+        objects.objects.forEach((object) => {
+            //add coins
+            if (object.type == "coin") {
+                let coinSprite = this.physics.add.sprite(object.x, object.y, "coin", 0);
+                coinSprite.setOrigin(0, 1);
+                coinSprite.setMaxVelocity(0, 0);
                 coinSprite.play("coinSpin");
 
                 this.physics.add.overlap(this.playerSprite, coinSprite, () => {
                     this.sound.play("coinPickupSound");
-                    this.signalManager.emit("coinCollected");
+                    this.signalManager.emit("coinCollected", [this.playerSprite.x - this.cameras.main.scrollX, this.playerSprite.y - this.cameras.main.scrollY]);
                     this.coinCount++;
                     coinSprite.destroy();
                 });
                 this.coins.push(coinSprite);
+            } else if (object.type == "vine") {
+                let spriteKey: string = (object.name == "vineTop") ? "vineTop" : "vineBody";
+                console.log(spriteKey);
+                let vineSprite = this.physics.add.sprite(object.x, object.y, spriteKey);
+                vineSprite.setOrigin(0, 1);
+                vineSprite.setMaxVelocity(0, 0);
+                vineSprite.setDepth(0.1);
+
+                this.physics.add.overlap(this.playerSprite, vineSprite, () => {
+                    if(this.keys["left"].isDown && this.keys["right"].isDown){
+                        this.playerSprite.body.setVelocityY(-1000);
+                    }
+                    //setMaxVelocity and set interval to check when to turn it back up
+                    if(this.vineInterval == null){
+                        this.playerSprite.body.setMaxVelocityX(400);
+                        this.vineInterval = setInterval(() => {
+                            if(this.physics.overlap(this.playerSprite, vineSprite) == false){
+                                clearInterval(this.vineInterval);
+                                this.vineInterval = null;
+                                this.playerSprite.body.setMaxVelocityX(1000);
+                            }
+                        }, 250)
+                    }
+                })
             }
         })
     }

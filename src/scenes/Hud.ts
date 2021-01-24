@@ -40,7 +40,21 @@ export class Hud extends Scene {
             this.totalCoinCount = total;
             this.coinCountText.setText(`${this.currentCoinCount}/${this.totalCoinCount}`);
         }, this);
-        this.singalManager.on("coinCollected", () => {
+        this.singalManager.on("coinCollected", (screenCoords) => {
+            let travelCoin = this.add.sprite(screenCoords[0], screenCoords[1], "coin");
+            travelCoin.setOrigin(0,0);
+            travelCoin.setScale(.5,.5);
+            travelCoin.play("coinSpin");
+            this.add.tween({
+                targets: travelCoin,
+                repeat: false,
+                x: 15,
+                y: 15,
+                duration: 600,
+                onComplete: () => {
+                    travelCoin.destroy();
+                }
+            })
             this.currentCoinCount++;
             this.coinCountText.setText(`${this.currentCoinCount}/${this.totalCoinCount}`);
             if(this.currentCoinCount == this.totalCoinCount){

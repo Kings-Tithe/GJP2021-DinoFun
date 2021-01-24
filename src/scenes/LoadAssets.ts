@@ -27,6 +27,8 @@ export class LoadAssets extends Scene {
 
         //objects
         this.load.spritesheet("coin",`${this.assets}/images/tilesets/tropicalIsland/Collectable/GoldCoin/coinSheet.png`, {frameWidth: 128, frameHeight: 128});
+        this.load.image("vineBody",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Ladder01.png`);
+        this.load.image("vineTop",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Ladder02.png`);
 
         //sound effects
         this.load.audio("coinPickupSound",`${this.assets}/audio/soundEffects/Ancient_Game_Coin_Jar_Touch.wav`);
