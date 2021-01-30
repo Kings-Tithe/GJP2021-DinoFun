@@ -4,11 +4,13 @@ import { SignalManager } from '../services/SignalManager';
 
 export class Hud extends Scene {
 
-    //coin counter
+    //counters
     coinCountSymbol: Phaser.GameObjects.Sprite;
     totalCoinCount: number;
     currentCoinCount: number;
     coinCountText: Phaser.GameObjects.Text;
+    totalEggCount: number;
+    eggCountSymbols: Phaser.GameObjects.Sprite[];
 
     //level timer
     levelTime: number;
@@ -26,6 +28,8 @@ export class Hud extends Scene {
         this.totalCoinCount = 0;
         this.currentCoinCount = 0;
         this.levelTime = 0;
+        this.totalEggCount = 0;
+        this.eggCountSymbols = [];
     }
 
 
@@ -33,6 +37,7 @@ export class Hud extends Scene {
         this.createSingalListeners();
         this.createCoinCounter();
         this.createLevelTimer();
+        this.createEggCounter();
     }
 
     createSingalListeners(){
@@ -61,6 +66,47 @@ export class Hud extends Scene {
                 this.stopLevelTime();
             }  
         });
+        this.singalManager.on("eggCollected", (screenCoords) => {
+            let travelEgg = this.add.sprite(screenCoords[0], screenCoords[1], "eggGreen");
+            travelEgg.setOrigin(0,0);
+            travelEgg.setScale(.5,.5);
+            let rays = this.add.sprite(screenCoords[0] + 30, screenCoords[1] + 30, "godRays");
+            rays.setOrigin(.5,.5);
+            rays.setScale(3,3);
+            rays.setDepth(-1);
+            this.totalEggCount++;
+            let eggTimeline = this.tweens.createTimeline();
+            eggTimeline.add({
+                targets: travelEgg,
+                repeat: false,
+                y: this.sys.game.scale.gameSize.height /8,
+                duration: 1500,
+            })
+            eggTimeline.add({
+                targets: travelEgg,
+                repeat: false,
+                x: this.sys.canvas.width-(this.totalEggCount * 64),
+                y: 15,
+                duration: 500,
+                onComplete: () => {
+                    travelEgg.destroy();
+                    this.eggCountSymbols[this.totalEggCount].clearTint();
+                },
+            })
+            eggTimeline.play();
+            this.add.tween({
+                targets: rays,
+                repeat: false,
+                duration: 1500,
+                angle: 200,
+                onComplete: () => {
+                    rays.destroy();
+                },
+                onUpdate: () => {
+                    rays.y = travelEgg.y + 30;
+                }
+            })
+        });
         this.singalManager.on("levelTimerStart", () => {
             this.startLevelTime();
         })
@@ -82,6 +128,16 @@ export class Hud extends Scene {
             fontSize: "75px",
             color: "white"
         })
+    }
+
+    createEggCounter(){
+        for(let i = 1 ; i < 4; i++){
+            let eggCounter = this.add.sprite(this.sys.canvas.width-(i * 64), 15, "eggGreen");
+            eggCounter.setOrigin(0,0);
+            eggCounter.setScale(.5,.5);
+            eggCounter.setTint(0x858585);
+            this.eggCountSymbols[i] = eggCounter;
+        }
     }
 
     startLevelTime(){

@@ -11,7 +11,6 @@ export class FirstLevel extends Scene {
     tilemap: Phaser.Tilemaps.Tilemap;
     changedX: number;
     coins: Phaser.GameObjects.Sprite[];
-    coinCount: number;
     signalManager: SignalManager;
     vineInterval: any;
 
@@ -20,7 +19,6 @@ export class FirstLevel extends Scene {
 
         //initalize
         this.coins = [];
-        this.coinCount = 0;
         this.signalManager = SignalManager.get();
     }
 
@@ -76,6 +74,7 @@ export class FirstLevel extends Scene {
     }
 
     setupKeys() {
+        //keyboard keys
         this.keys = {};
         this.keys["right"] = this.input.keyboard.addKey("D");
         this.keys["left"] = this.input.keyboard.addKey("A");
@@ -141,10 +140,8 @@ export class FirstLevel extends Scene {
         //setup camera
         this.cameras.main.startFollow(this.playerSprite);
         this.cameras.main.setZoom(0.5)
-        //this.cameras.main.setBounds(0,0,this.tilemap.widthInPixels, this.tilemap.heightInPixels);
 
         let objects = this.tilemap.getObjectLayer("collectable");
-        //this.signalManager.emit("TotalCoinCount", objects.objects.length);
         objects.objects.forEach((object) => {
             //add coins
             if (object.type == "coin") {
@@ -156,7 +153,6 @@ export class FirstLevel extends Scene {
                 this.physics.add.overlap(this.playerSprite, coinSprite, () => {
                     this.sound.play("coinPickupSound");
                     this.signalManager.emit("coinCollected", [this.playerSprite.x - this.cameras.main.scrollX, this.playerSprite.y - this.cameras.main.scrollY]);
-                    this.coinCount++;
                     coinSprite.destroy();
                 });
                 this.coins.push(coinSprite);
@@ -184,8 +180,44 @@ export class FirstLevel extends Scene {
                         }, 250)
                     }
                 })
-            }
+            } else if (object.type == "egg"){
+                let eggSprite = this.physics.add.sprite(object.x, object.y, "eggGreen", 0);
+                eggSprite.setOrigin(0, 1);
+                eggSprite.setMaxVelocity(0, 0);
+                eggSprite.setBodySize(128,256);
+                eggSprite.setOffset(0,16)
+                eggSprite.play("eggGreenBounceAnim");
+
+                this.physics.add.overlap(this.playerSprite, eggSprite, () => {
+                    this.sound.play("eggPickupSound");
+                    this.signalManager.emit("eggCollected", [this.playerSprite.x - this.cameras.main.scrollX, this.playerSprite.y - this.cameras.main.scrollY]);
+                    eggSprite.destroy();
+                })
+            } else if (object.type == "mushroom"){
+                let mushroomSprite = this.physics.add.sprite(object.x, object.y, "mushroom", 0);
+                mushroomSprite.setOrigin(0, 1);
+                mushroomSprite.setMaxVelocity(0, 0);
+                mushroomSprite.setDepth(1);
+                mushroomSprite.body.setSize(80,60,true);
+                mushroomSprite.body.setOffset(24,66);
+                mushroomSprite.setImmovable(true);
+                mushroomSprite.setData("recentlyTouched", false);
+                mushroomSprite.setBounce(0,1);
+
+                this.physics.add.collider(this.playerSprite, mushroomSprite, () => {
+                    if(!mushroomSprite.getData("recentlyTouched")){
+                        console.log(this.playerSprite.body.velocity.y);
+                        // this.playerSprite.setVelocityY(-1 *((this.playerSprite.body.velocity.y) + 5000))
+                        console.log(this.playerSprite.body.velocity.y);
+                        mushroomSprite.setData("recentlyTouched", true);
+                        setTimeout(() => {
+                            mushroomSprite.setData("recentlyTouched", false);
+                        }, 500)
+                    }
+                })
+            } 
         })
+        this.signalManager.emit("TotalCoinCount", this.coins.length)
     }
 
     createParallexBackground() {

@@ -27,12 +27,20 @@ export class LoadAssets extends Scene {
 
         //objects
         this.load.spritesheet("coin",`${this.assets}/images/tilesets/tropicalIsland/Collectable/GoldCoin/coinSheet.png`, {frameWidth: 128, frameHeight: 128});
+        this.load.spritesheet("eggGreenBounce",`${this.assets}/images/tilesets/collectables/egg_green_bounce.png`, {frameWidth: 128, frameHeight: 256});
+        this.load.image("eggGreen",`${this.assets}/images/tilesets/collectables/egg_Green.png`);
         this.load.image("vineBody",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Ladder01.png`);
         this.load.image("vineTop",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Ladder02.png`);
+        this.load.image("mushroom",`${this.assets}/images/tilesets/fantasyVillage/GameObject/Mushroom.png`);
 
         //sound effects
         this.load.audio("coinPickupSound",`${this.assets}/audio/soundEffects/Ancient_Game_Coin_Jar_Touch.wav`);
+        this.load.audio("eggPickupSound",`${this.assets}/audio/soundEffects/Ancient_Game_Fantasy_Treasure_1.wav`);
         this.load.audio("forestMusic",`${this.assets}/audio/music/Field_3.mp3`);
+
+        //user interface
+        this.load.image("controlArrowLeft",`${this.assets}/images/userInterface/ControlArrowRight.png`);
+        this.load.image("godRays",`${this.assets}/images/userInterface/godrays.png`);
     }
 
     create(){
@@ -41,6 +49,12 @@ export class LoadAssets extends Scene {
             key: "coinSpin",
             frames: this.anims.generateFrameNumbers("coin", { start: 0, end: 5 }),
             frameRate: 8,
+            repeat: -1
+        });
+        this.anims.create({
+            key: "eggGreenBounceAnim",
+            frames: this.anims.generateFrameNumbers("eggGreenBounce", { start: 0, end: 30 }),
+            frameRate: 15,
             repeat: -1
         });
         //star hud scene

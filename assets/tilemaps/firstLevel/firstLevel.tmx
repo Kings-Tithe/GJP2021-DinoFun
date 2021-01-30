@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="137">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="140">
  <editorsettings>
   <export target="firstLevel.json" format="json"/>
  </editorsettings>
@@ -8,6 +8,9 @@
  </tileset>
  <tileset firstgid="21" name="objects" tilewidth="128" tileheight="128" tilecount="42" columns="14">
   <image source="../../images/tilesets/fantasyVillage/GameObject/objects.png" width="1792" height="384"/>
+ </tileset>
+ <tileset firstgid="63" name="egg_Green" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="../../images/tilesets/collectables/egg_Green.png" width="128" height="128"/>
  </tileset>
  <layer id="1" name="collide" width="100" height="40">
   <data encoding="csv">
@@ -172,7 +175,10 @@
   <object id="133" type="vine" gid="37" x="9856" y="1408" width="128" height="128"/>
   <object id="134" type="vine" gid="37" x="9856" y="1280" width="128" height="128"/>
   <object id="135" name="vineTop" type="vine" gid="23" x="9856" y="1152" width="128" height="128"/>
-  <object id="136" type="mushroom" gid="22" x="10624" y="3328" width="128" height="128"/>
+  <object id="136" type="mushroom" gid="22" x="512" y="3328" width="128" height="128"/>
+  <object id="137" name="green" type="egg" gid="63" x="7168" y="3328" width="128" height="128"/>
+  <object id="138" name="green" type="egg" gid="63" x="768" y="3328" width="128" height="128"/>
+  <object id="139" name="green" type="egg" gid="63" x="8832" y="2048" width="128" height="128"/>
  </objectgroup>
  <layer id="2" name="overtop" width="100" height="40" visible="0">
   <data encoding="csv">
